@@ -6,11 +6,27 @@
 	$: accounts = []
 	$: connectResult = ""
 	$: opResult = ""
+	$: network = ""
 
+	if( hasWallet ) {
+		unisat.on(`accountsChanged` , ( values ) => {
+			accounts = values 
+			connectResult = accounts.length > 0 ? accounts : 'No connect.'
+		})
+
+		unisat.on(`networkChanged` , ( value ) => {
+			network = value 
+		})
+
+	}
+	
 	async function connect(){
 		connectResult = "Waiting for unisat approve."
 		accounts = await unisat.requestAccounts()
 		connectResult =  accounts.length > 0 ? accounts : 'No connect.'
+
+		network = await unisat.getNetwork()
+
 	}
 
 	async function signMessage(){
@@ -29,6 +45,10 @@
 
 <div class="message green">
 	Chrome Extensions: { hasWallet?"UniSat wallet is installed":"Unisat wallet is not installed"} 
+</div>
+
+<div class="network">
+	Network : { network }
 </div>
 
 <div class="accounts">
